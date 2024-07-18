@@ -1,10 +1,12 @@
 * Lisax Package
 ** Objects, subpatcher and functions for communicating between Lisp and Max
 - this package uses the osc-eval object (Max) and the 'osc-call (:sc) function from the slippery chicken package
-- copy this package in your Max Packages folder and make sure that your max preferences have a path to this folder
-** how use this all
+- copy this package in your Max Packages folder and make sure that your max preferences have a path to this
+** how use this all?
 - evaluate the lisp file in your repl (load-file)
 - call (osc-call) in your repl
-- use your the max objcts and subpatcher
+- use the max objects and subpatcher
 ** List of subpatcher
 - (linden-max-env)
+** Questions?
+philipp @ von-neumann.com

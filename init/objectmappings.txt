@@ -1,0 +1,2 @@
+max objectfile (linden-max-env) (linden-max-env);
+max definesubstitution (linden-max-env) bpatcher @name linden-max-env-patcher.maxpat;

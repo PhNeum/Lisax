@@ -8,5 +8,6 @@
 - use the max objects and subpatcher
 ** List of subpatcher
 - (linden-max-env)
+- (linden-matrix)
 ** Questions?
 philipp @ von-neumann.com

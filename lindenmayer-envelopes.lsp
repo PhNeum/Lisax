@@ -375,24 +375,24 @@
 |#
 
 ;;;; get matrix row
-(defun lookup-global-matrix (index)
+(defun get-row-from-global-matrix (index)
   (cdr (assoc index *global-matrix*)))
 #|
-(lookup-global-matrix 4)
+(get-row-from-global-matrix 4)
 |#
 
 ;;;; create data for envelopes and pulate the matrix
 (defun set-linden-global-matrix (min max num-of-segs)
-  (Let* ((num-of-segs (if (< num-of-segs 500)
-			  500
-			  num-of-segs))
+  (Let* ((num-of-segs (min 500 num-of-segs))
 	 (min (if (< max min)
 		  max
 		  min))
 	 (max (if (> min max)
 		  min
 		  max))
-	 (data-pairs (data-pairs (procession num-of-segs 5)))
+	 (data-pairs (data-pairs
+		      (procession num-of-segs
+				  20)))	 
 	 (elements (make-elements-for-linden data-pairs))
 	 (rules (rule-3 data-pairs))
 	 (l-object (make-l-for-lookup 'l-sys elements rules))
@@ -418,14 +418,16 @@
 	  do (fill-global-matrix i (nth i envelopes)))))
 
 #|
-(set-linden-global-matrix 0 1 50)
+(set-linden-global-matrix 0 1 500)
 |#
 
 ;;;; read envelopes from *global-matrix* from max
 (defun read-linden-global-matrix (axiom start end)
   (update-x-values-and-flatten
-   (loop for i from start to end
-	 collect (nth i (lookup-global-matrix axiom)))))
+     (loop for i from start to end
+	   collect (nth i (get-row-from-global-matrix
+			   (min 499 axiom))))))
+
 
 #|
 (read-linden-global-matrix 2 4 10)

@@ -1184,7 +1184,7 @@
 		"dependency_cache" : [ 			{
 				"name" : "osc-sc-eval.maxpat",
 				"bootpath" : "~/Documents/Max 8/Library/Abstractions",
-				"patcherrelativepath" : "../../Library/Abstractions",
+				"patcherrelativepath" : "../../../Library/Abstractions",
 				"type" : "JSON",
 				"implicit" : 1
 			}

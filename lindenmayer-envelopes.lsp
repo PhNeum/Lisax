@@ -345,3 +345,90 @@
 	 (c-vals (interpret-data-pair-list-to-c-values look-up))
 	 (envelope (make-data-packs-for-envs x-vals y-vals c-vals)))
     (update-x-values-and-flatten envelope)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Save envelope data in a matrix like structure
+;; - save segments of all possible axioms of a lindenmayer envelope in
+;; a matrix
+;; - read a specific row from the matrix from a start index to a end index
+;; - create a new envelope from this
+
+;;;; create global matrix
+(defun make-global-matrix (size)
+  (defparameter *global-matrix*
+    (loop for i from 0 below size
+	  collect (list i '())))
+  *global-matrix*)
+#|
+(make-global-matrix 20)
+*global-matrix*
+|#
+
+;;;; fill rows from matrix
+(defun fill-global-matrix (index data)
+  (setf (cdr (assoc index *global-matrix*)) data))
+
+#|
+(fill-global-matrix 4 '(1 2 3))
+*global-matrix*
+|#
+
+;;;; get matrix row
+(defun lookup-global-matrix (index)
+  (cdr (assoc index *global-matrix*)))
+#|
+(lookup-global-matrix 4)
+|#
+
+;;;; create data for envelopes and pulate the matrix
+(defun set-linden-global-matrix (min max num-of-segs)
+  (Let* ((num-of-segs (if (< num-of-segs 500)
+			  500
+			  num-of-segs))
+	 (min (if (< max min)
+		  max
+		  min))
+	 (max (if (> min max)
+		  min
+		  max))
+	 (data-pairs (data-pairs (procession num-of-segs 5)))
+	 (elements (make-elements-for-linden data-pairs))
+	 (rules (rule-3 data-pairs))
+	 (l-object (make-l-for-lookup 'l-sys elements rules))
+	 (look-ups (loop for i from 1 to num-of-segs
+			 collect (do-simple-lookup l-object i
+				   num-of-segs)))
+	 (x-vals (loop for i from 0 below num-of-segs
+		       collect (interpret-data-pair-list-to-x-values
+				(nth i look-ups))))
+	 (y-vals (loop for i from 0 below num-of-segs
+		       collect (interpret-data-pair-list-to-y-values				
+				(nth i look-ups) min max)))
+	 (c-vals (loop for i from 0 below num-of-segs
+		       collect (interpret-data-pair-list-to-c-values
+				(nth i look-ups))))
+	 (envelopes (loop for i from 0 below num-of-segs
+			  collect (make-data-packs-for-envs
+				   (nth i x-vals)
+				   (nth i y-vals)
+				   (nth i c-vals)))))
+    (make-global-matrix num-of-segs)
+    (loop for i from 0 below num-of-segs
+	  do (fill-global-matrix i (nth i envelopes)))))
+
+#|
+(set-linden-global-matrix 0 1 50)
+|#
+
+;;;; read envelopes from *global-matrix* from max
+(defun read-linden-global-matrix (axiom start end)
+  (update-x-values-and-flatten
+   (loop for i from start to end
+	 collect (nth i (lookup-global-matrix axiom)))))
+
+#|
+(read-linden-global-matrix 2 4 10)
+=> (0 5.0 0.0 811 0.553 -0.666 4395 0.553 -0.666 7979 5.0 0.0 8790 2.22 -0.333
+ 12545 5.0 0.0 13356 2.22 -0.333)
+|#
